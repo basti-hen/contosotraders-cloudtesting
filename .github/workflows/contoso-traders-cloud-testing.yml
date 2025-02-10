@@ -186,13 +186,14 @@ jobs:
             if [ ! -f /root/.azure/bin/azcopy ]; then
               echo "Installing azcopy in /root/.azure/bin..."
               mkdir -p /root/.azure/bin
-              if ! command -v tar >/dev/null 2>&1; then
-                echo "tar not found, installing tar..."
-                apt-get update && apt-get install -y tar || exit 1
-              fi
-              curl -L https://aka.ms/downloadazcopy-v10-linux -o /tmp/azcopy.tar.gz || exit 1
-              tar -xvf /tmp/azcopy.tar.gz --strip-components=1 -C /root/.azure/bin || exit 1
+              # Install tar and curl using apk
+              apk update && apk add --no-cache tar curl
+              # Download and extract azcopy
+              curl -L https://aka.ms/downloadazcopy-v10-linux -o /tmp/azcopy.tar.gz
+              tar -xvf /tmp/azcopy.tar.gz --strip-components=1 -C /root/.azure/bin
               chmod +x /root/.azure/bin/azcopy
+              # Add azcopy to PATH
+              export PATH=$PATH:/root/.azure/bin
             fi
             az storage blob sync --account-name '${{ env.PRODUCT_IMAGES_STORAGE_ACCOUNT_NAME }}${{ vars.SUFFIX }}' -c '${{ env.PRODUCT_DETAILS_CONTAINER_NAME }}' -s 'src/ContosoTraders.Api.Images/product-details'
       - name: seed product image (product list)
