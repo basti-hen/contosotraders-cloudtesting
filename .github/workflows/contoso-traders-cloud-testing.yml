@@ -186,7 +186,11 @@ jobs:
             if [ ! -f /root/.azure/bin/azcopy ]; then
               echo "Installing azcopy in /root/.azure/bin..."
               mkdir -p /root/.azure/bin
-              curl -L https://aka.ms/downloadazcopy-v10-linux -o /tmp/azcopy.tar.gz || exit 1              
+              if ! command -v tar >/dev/null 2>&1; then
+                echo "tar not found, installing tar..."
+                apt-get update && apt-get install -y tar || exit 1
+              fi
+              curl -L https://aka.ms/downloadazcopy-v10-linux -o /tmp/azcopy.tar.gz || exit 1
               tar -xvf /tmp/azcopy.tar.gz --strip-components=1 -C /root/.azure/bin || exit 1
               chmod +x /root/.azure/bin/azcopy
             fi
