@@ -58,13 +58,6 @@ export default defineConfig({
     },
     // Test projects that don't require authentication
     {
-      name: 'chromium',
-      use: {
-        ...devices['Desktop Chrome']
-      },
-      testIgnore: /api/,
-    },
-    {
       name: 'firefox',
       use: {
         ...devices['Desktop Firefox']
